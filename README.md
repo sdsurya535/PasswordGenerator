@@ -1,2 +1,3 @@
 # PasswordGenerator
-Generate Password
+Generate Password Using React
+
