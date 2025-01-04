@@ -90,25 +90,135 @@ graph TB
 ## 3. Database Design
 
 ### 3.1 Entity Relationship Diagram
-[Previous ERD diagram code here]
+```mermaid
+erDiagram
+    USERS ||--o{ USER_ROLES : has
+    USER_ROLES }o--|| ROLES : belongs_to
+    DEPARTMENTS ||--o{ EMPLOYEES : belongs_to
+    EMPLOYEES ||--o{ TASKS : assigned_to
+    EMPLOYEES ||--o{ ATTENDANCE : records
+    EMPLOYEES ||--o{ LEAVE_REQUESTS : submits
+    PROJECTS ||--o{ TASKS : contains
+    TASKS ||--o{ TASK_COMMENTS : has
+    TASKS ||--o{ TASK_ATTACHMENTS : contains
+    EMPLOYEES ||--o{ PERFORMANCE_REVIEWS : receives
 
-### 3.2 Table Relationships
-#### User Management
-```sql
--- Users and Authentication
-CREATE TABLE users (
-    [Previous SQL code]
-);
+    USERS {
+        int user_id PK
+        varchar username
+        varchar email
+        varchar password_hash
+        datetime created_at
+        datetime last_login
+        boolean is_active
+    }
 
--- Roles and Permissions
-CREATE TABLE roles (
-    [Previous SQL code]
-);
+    USER_ROLES {
+        int user_role_id PK
+        int user_id FK
+        int role_id FK
+        datetime assigned_at
+    }
 
--- User-Role Mapping
-CREATE TABLE user_roles (
-    [Previous SQL code]
-);
+    ROLES {
+        int role_id PK
+        varchar role_name
+        text permissions
+        boolean is_active
+    }
+
+    DEPARTMENTS {
+        int department_id PK
+        varchar name
+        int manager_id FK
+        text description
+        boolean is_active
+    }
+
+    EMPLOYEES {
+        int employee_id PK
+        int user_id FK
+        int department_id FK
+        varchar first_name
+        varchar last_name
+        date join_date
+        varchar position
+        decimal salary
+        varchar contact_number
+        varchar emergency_contact
+        enum employment_status
+    }
+
+    TASKS {
+        int task_id PK
+        int project_id FK
+        int assigned_to FK
+        varchar title
+        text description
+        enum priority
+        enum status
+        datetime due_date
+        datetime created_at
+        datetime completed_at
+    }
+
+    PROJECTS {
+        int project_id PK
+        varchar name
+        text description
+        date start_date
+        date end_date
+        enum status
+        int manager_id FK
+    }
+
+    TASK_COMMENTS {
+        int comment_id PK
+        int task_id FK
+        int user_id FK
+        text comment
+        datetime created_at
+    }
+
+    TASK_ATTACHMENTS {
+        int attachment_id PK
+        int task_id FK
+        varchar file_name
+        varchar file_path
+        datetime uploaded_at
+    }
+
+    ATTENDANCE {
+        int attendance_id PK
+        int employee_id FK
+        date date
+        time check_in
+        time check_out
+        text notes
+    }
+
+    LEAVE_REQUESTS {
+        int request_id PK
+        int employee_id FK
+        date start_date
+        date end_date
+        enum leave_type
+        text reason
+        enum status
+        datetime created_at
+        int approved_by FK
+    }
+
+    PERFORMANCE_REVIEWS {
+        int review_id PK
+        int employee_id FK
+        int reviewer_id FK
+        date review_date
+        text evaluation
+        int rating
+        text goals
+        text recommendations
+    }
 ```
 
 ### 3.3 Data Dictionary
